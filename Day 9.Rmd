@@ -1,0 +1,83 @@
+---
+title: "Day 9"
+output: html_document
+date: "2024-12-09"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r Input}
+data = readLines("C:/users/sebas/Downloads/input.txt")
+```
+
+```{r Part 1}
+data = list("2333133121414131402")
+data = data[[1]]
+data = strsplit(data, "")[[1]]
+
+blocks = c()
+id = 0
+for (number in 1:length(data)) {
+  if (number %% 2 == 1) {
+    size = data[number]
+    blocks = c(blocks, rep(id, size))
+    id = id + 1
+  } else if (number %% 2 == 0){
+    blocks = c(blocks, rep(".", data[number]))
+  }
+}
+blocks
+
+rearranged = blocks
+for (number in length(rearranged):1) {
+  setTxtProgressBar(pb, number)
+  if (rearranged[number] != ".") {
+    toSwap = rearranged[number]
+    rearranged[number] = "."
+    rearranged[min(which(rearranged == "."))] = toSwap
+  }
+}
+rearranged
+
+checksum = 0
+for (number in 1:length(rearranged)) {
+  if (rearranged[number] == "."){
+  } else {
+    checksum = checksum + (number-1) * as.numeric(rearranged[number])
+  }
+}
+format(checksum, scientific = F)
+```
+
+```{r Part 2}
+rearranged = blocks
+numbers = unique(sort(as.numeric(rearranged), decreasing = T))
+rle = rle(rearranged)
+for (number in numbers) {
+  toSwap = which(rearranged == number)
+  firstEncounter = min(which(rle$values == "." & rle$lengths >= length(toSwap)))
+  if (firstEncounter != Inf) {
+    swapIndex = sum(rle$lengths[1:(firstEncounter - 1)]) + 1
+    if (swapIndex < min(which(rearranged == number))) {
+      swapVector = seq(swapIndex, length.out = length(toSwap))
+      rearranged[toSwap] = "."
+      rearranged[swapVector] = number
+      rle = rle(rearranged)
+    }
+  }
+}
+
+checksum = 0
+for (number in 1:length(rearranged)) {
+  if (rearranged[number] == "."){
+  } else {
+    checksum = checksum + (number-1) * as.numeric(rearranged[number])
+  }
+}
+format(checksum, scientific = F)
+```

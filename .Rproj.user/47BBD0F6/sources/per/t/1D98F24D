@@ -1,0 +1,28 @@
+{
+    "id": "1D98F24D",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1734084098353.0,
+    "source_on_save": false,
+    "relative_order": 8,
+    "properties": {
+        "id": "19453cc45e33472ea368f5e6f49d46a9",
+        "name": "targetx",
+        "title": "targetx",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 2478496513184985890,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1734084098353,
+    "read_only": false,
+    "read_only_alternatives": []
+}

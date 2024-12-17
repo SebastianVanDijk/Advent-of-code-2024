@@ -1,0 +1,169 @@
+---
+title: "Day 8"
+output: html_document
+date: "2024-12-08"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(gtools)
+```
+
+```{r Input}
+data = c(".E..........m..0N.........f.......................
+........N........P0...............................
+.......j..................................F.......
+........1j............P........................C..
+...........................3..K......f..........E.
+...........V...y...0.....................F........
+1.......j.....P....y.N.......................F....
+....................m...................C.........
+..L......P....p..................w.m..............
+............E......p..AU........8......f..........
+..............C...............w....d..............
+j1...............E..........3.........f........w..
+.................p...A..........3.................
+.................3..p........KU...w..r..F.........
+7.........y........8.......................r......
+........y..u......K...............................
+...1..................8....C...K..................
+...........h.......................6..............
+......................U.........A.r..t........6...
+...........5.........8..c.........................
+.................U................t...............
+.....L...O...................t.............d......
+.........7........................................
+......L..H...c.....9....t.................6.......
+...........................c.M..................4.
+.....R..7...O.....................................
+.......................9......................d...
+..................................................
+.........L..9...R..........................6c.....
+..M.....T.5.................................d.....
+.......5OR...................T....................
+.......D......o.........v...................r.....
+...u....o.........5...............................
+.......WR.....Y...........................e...4...
+T............O......M..................4..a.......
+.Y...................M............................
+........W..D...............oh............e........
+.......7......Do...................A...e.......4..
+.W...Y..D........................h...v..........e.
+..........V.....9.l.......h.......a.........n..v..
+.......................H.....a2...................
+..................................................
+...V............Y....J..H2................vn......
+..............................H2.................n
+................V..........l...........k..........
+.T..u........................J...ak...............
+..................J.....l.........................
+.................l................................
+......u.........................................n.
+......................J..k............2...........")
+```
+
+```{r Part 1}
+data = c("............
+........0...
+.....0......
+.......0....
+....0.......
+......A.....
+............
+............
+........A...
+.........A..
+............
+............")
+
+
+width = 50
+data = strsplit(data, "\n")[[1]] 
+data = strsplit(data, "")
+data = matrix(unlist(data), byrow = T, ncol = width)
+length = nrow(data)
+
+string = unique(as.character(data))
+string = string[-which(string == ".")]
+test = data
+for (character in string) {
+  positions = which(data == character, arr.ind = T)
+
+  for (i in 1:(nrow(positions)-1)){
+    for (j in (i+1):nrow(positions)) {
+      place1 = positions[i,]
+      place2 = positions[j,]
+      direction = place1 - place2
+
+      for (x in 1:width){
+        possible = place1 + direction * x
+        if (possible[1] > 0 & possible[1] <= length  &
+            possible[2] > 0 & possible[2] <= width) {
+          distance1 <- sqrt(sum(place1 - possible)^2)
+          distance2 <- sqrt(sum(place2 - possible)^2)
+          if (distance1 == 2*distance2 | distance1*2 == distance2) {
+            test[possible[1],possible[2]] = "#"
+          }
+        }
+        
+        possible = place1 + direction * -1 * x
+        if (possible[1] > 0 & possible[1] <= length  &
+            possible[2] > 0 & possible[2] <= width) {
+          distance1 <- sqrt(sum(place1 - possible)^2)
+          distance2 <- sqrt(sum(place2 - possible)^2)
+          if (distance1 == 2*distance2 | distance1*2 == distance2) {
+            test[possible[1],possible[2]] = "#"
+          }
+        }
+      }
+    }
+  }
+}
+sum(test == "#")
+
+```
+
+```{r Part 2}
+width = 50
+data = strsplit(data, "\n")[[1]] 
+data = strsplit(data, "")
+data = matrix(unlist(data), byrow = T, ncol = width)
+length = nrow(data)
+
+string = unique(as.character(data))
+string = string[-which(string == ".")]
+test = data
+for (character in string) {
+  positions = which(data == character, arr.ind = T)
+
+  for (i in 1:(nrow(positions)-1)){
+    for (j in (i+1):nrow(positions)) {
+      place1 = positions[i,]
+      place2 = positions[j,]
+      direction = place1 - place2
+
+      for (x in 1:width){
+        possible = place1 + direction * x
+        if (possible[1] > 0 & possible[1] <= length  &
+            possible[2] > 0 & possible[2] <= width) {
+          distance1 <- sqrt(sum(place1 - possible)^2)
+          distance2 <- sqrt(sum(place2 - possible)^2)
+          test[possible[1],possible[2]] = "#"
+        }
+        
+        possible = place1 + direction * -1 * x
+        if (possible[1] > 0 & possible[1] <= length  &
+            possible[2] > 0 & possible[2] <= width) {
+          distance1 <- sqrt(sum(place1 - possible)^2)
+          distance2 <- sqrt(sum(place2 - possible)^2)
+          test[possible[1],possible[2]] = "#"
+        }
+      }
+    }
+  }
+}
+sum(test != ".")
+```

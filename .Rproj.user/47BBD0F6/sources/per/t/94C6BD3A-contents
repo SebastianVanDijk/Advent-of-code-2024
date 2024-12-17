@@ -1,0 +1,111 @@
+---
+title: "Day 11"
+output: html_document
+date: "2024-12-11"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(pbapply)
+library(parallel)
+```
+
+```{r Input}
+data = c("9759 0 256219 60 1175776 113 6 92833")
+```
+
+```{r Part 1}
+data = c("125 17")
+data = as.numeric(strsplit(data, " ")[[1]])
+
+blink = function(data) {
+  newData = c()
+  for (stone in data) {
+    if (stone == 0){
+      newData = c(newData, 1)
+    } else if ((nchar(stone) %% 2) == 0) {
+      stringStone = as.character(stone)
+      stringStone = strsplit(stringStone, "")[[1]]
+      lengthToSplit = nchar(stone) / 2
+      stone1 = as.numeric(str_flatten(stringStone[1:lengthToSplit], ""))
+      stone2 =  as.numeric(str_flatten(stringStone[(lengthToSplit+1):nchar(stone)], ""))
+      newData = c(newData, stone1, stone2)
+    } else {
+      newData = c(newData, stone * 2024)
+    }
+  }
+  return(newData)
+}
+
+solvePart1 = function(data, blinks = 1) {
+  pb = txtProgressBar(min = 0, max = sum((1:blinks)^2), initial = 0, style = 3)
+  progress = 0
+  for (i in 1:blinks){
+    data = blink(data)
+    progress = progress + i^2
+    setTxtProgressBar(pb, progress)
+  }
+  close(pb)
+  return(length(data))
+}
+
+solvePart1(0, blinks = 75)
+```
+
+```{r Part 2}
+blink = function(data) {
+  zeros = data == 0
+  newData = rep(1, sum(zeros))
+  
+  even = nchar(data) %% 2 == 0
+  
+  if (any(even)) {
+    stone = data[even]
+    stringStone = as.character(stone)
+    charLength = nchar(stone)
+    lengthToSplit = charLength / 2
+    stone1 = as.numeric(substr(stone, 1, lengthToSplit))
+    stone2 = as.numeric(substr(stone, lengthToSplit + 1, charLength))
+    newData = c(newData, stone1, stone2)
+  }
+  
+  if (any(!zeros & !even)) {
+    stone = data[!zeros & !even]
+    newData = c(newData, stone * 2024)
+  }
+  return(newData)
+}
+
+
+
+blink2 = function(df) {
+  df = mutate(df, data = case_when(data == 0 ~ list(1),
+                            nchar(data) %% 2 == 0 ~ map(data, ~ as.numeric(c(
+    substr(as.character(.x), 1, nchar(.x) / 2), 
+    substr(as.character(.x), nchar(.x) / 2 + 1, nchar(.x))
+  ))),
+  T ~ map(data, ~ .x * 2024))) %>%
+    unnest(data) %>%
+    count(data, wt = n)
+  
+  return(df)
+}
+
+solvePart2 = function(data, blinks) {
+  for (i in 1:blinks) {
+    data = blink2(data)
+  }
+  return(sum(data$n))
+}
+
+test = as_tibble(table(data), stringsAsFactors = F) 
+test$data = as.numeric(test$data)
+answer = solvePart2(test, 25)
+format(answer, scientific = F)
+
+test$results
+
+```

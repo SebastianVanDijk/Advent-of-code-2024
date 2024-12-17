@@ -1,0 +1,160 @@
+---
+title: "Day 4"
+author: "sebastian"
+date: "2024-12-04"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r Input}
+dt = read.table("C:/Users/6331823/Downloads/Day4.txt")
+
+data = list()
+for (line in 1:nrow(dt)){
+  add = strsplit(dt[line,], "")
+  data = c(data, add)
+}
+```
+
+```{r Part 1}
+answer = 0
+y = 0
+for (line in data){
+  y = y + 1
+  x = 0
+  for (char in line){
+    x = x + 1
+    if (char == "X") {
+      toSearch = expand.grid(x + c(-1, 0, 1), y + c(-1, 0, 1)) %>% 
+        as_tibble() %>%
+        filter(Var1 > 0 & Var1 < 141, Var2 > 0 & Var2 < 141)
+      for (row in 1:nrow(toSearch)){
+        posy = toSearch[row,2, drop = T]
+        posx = toSearch[row,1, drop = T]
+        letter = data[[posy]][posx]
+        if (letter == "M") {
+          newy = posy +((y - posy) * -1)
+          newx = posx +((x - posx) * -1)
+          if (newy > 0 && newy < 141 && newx > 0 && newx < 141) {
+            newLetter = data[[newy]][newx]
+            if (newLetter == "A") {
+              newNewy = newy +((posy - newy) * -1)
+              newNewx = newx +((posx - newx) * -1)
+              if (newNewy > 0 && newNewy < 141 && newNewx > 0 && newNewx < 141) {
+                newNewLetter = data[[newNewy]][newNewx]
+                if (newNewLetter == "S"){
+                  answer = answer + 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+answer
+```
+
+```{r Part 2}
+y = 0
+a = data.frame()
+for (line in data){
+  y = y + 1
+  x = 0
+  for (char in line){
+    x = x + 1
+    if (char == "A") {
+      toSearch = expand.grid(x + c(-1, 0, 1), y + c(-1, 0, 1)) %>% 
+        as_tibble() %>%
+        filter(Var1 > 0 & Var1 < 141, Var2 > 0 & Var2 < 141)
+      for (row in 1:nrow(toSearch)){
+        posy = toSearch[row,2, drop = T]
+        posx = toSearch[row,1, drop = T]
+        letter = data[[posy]][posx]
+        if (letter == "M" & x != posx & y != posy) {
+          newy = y +((y - posy))
+          newx = x +((x - posx))
+          if (newy > 0 && newy < 141 && newx > 0 && newx < 141) {
+            newLetter = data[[newy]][newx]
+            if (newLetter == "S") {
+              a = rbind(a, list(x,y))
+              if (x == 2 && y == 2)
+              print(paste(posy, y, newy, posx, x ,newx))
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+sum(duplicated(a))
+
+```
+
+```{r faster matrix}
+test = as.matrix(data)
+data_matrix <- do.call(rbind, test)
+
+# Assuming `data` is a matrix for faster indexing
+answer <- 0
+y_max <- nrow(data_matrix)
+x_max <- ncol(data_matrix)
+
+# Precompute offsets for neighbors
+offsets <- expand.grid(c(-1, 0, 1), c(-1, 0, 1))
+offsets <- as.matrix(offsets)  # Convert to matrix for faster computation
+
+# Iterate over all positions
+for (y in 1:y_max) {
+  for (x in 1:x_max) {
+    if (data_matrix[y, x] == "X") {  # Use data_matrix
+      # Generate valid neighbors by applying offsets
+      neighbors <- offsets + matrix(c(x, y), nrow = nrow(offsets), ncol = 2, byrow = TRUE)
+      
+      # Filter neighbors within bounds
+      neighbors <- neighbors[neighbors[,1] > 0 & neighbors[,1] <= x_max & 
+                               neighbors[,2] > 0 & neighbors[,2] <= y_max, ]
+      
+      for (k in 1:nrow(neighbors)) {
+        posx <- neighbors[k, 1]
+        posy <- neighbors[k, 2]
+        letter <- data_matrix[posy, posx]  # Use data_matrix
+        
+        if (letter == "M") {
+          newy <- posy + ((y - posy) * -1)
+          newx <- posx + ((x - posx) * -1)
+          
+          if (newy > 0 && newy <= y_max && newx > 0 && newx <= x_max) {
+            newLetter <- data_matrix[newy, newx]  # Use data_matrix
+            
+            if (newLetter == "A") {
+              newNewy <- newy + ((posy - newy) * -1)
+              newNewx <- newx + ((posx - newx) * -1)
+              
+              if (newNewy > 0 && newNewy <= y_max && newNewx > 0 && newNewx <= x_max) {
+                newNewLetter <- data_matrix[newNewy, newNewx]  # Use data_matrix
+                
+                if (newNewLetter == "S") {
+                  answer <- answer + 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+answer
+```
+

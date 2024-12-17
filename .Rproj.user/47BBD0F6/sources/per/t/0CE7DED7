@@ -1,0 +1,29 @@
+{
+    "id": "0CE7DED7",
+    "path": "C:/Users/sebas/OneDrive - Universiteit Utrecht/Vrije tijd/Advent of code 2024/Day 14.Rmd",
+    "project_path": "Day 14.Rmd",
+    "type": "r_markdown",
+    "hash": "782143138",
+    "contents": "",
+    "dirty": false,
+    "created": 1734282758813.0,
+    "source_on_save": false,
+    "relative_order": 9,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "557,26",
+        "scrollLine": "550",
+        "last_setup_crc32": "5fd108cb799ae064",
+        "chunk_output_type": "console"
+    },
+    "folds": "13|6|515|0|\n",
+    "lastKnownWriteTime": 1734358427,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1734358427761,
+    "read_only": false,
+    "read_only_alternatives": []
+}
